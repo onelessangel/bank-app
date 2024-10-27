@@ -29,14 +29,16 @@ public class BankApplication {
 
         bankingServiceDemo(banking);
 
-//        bankReportsDemo(repository);
+        bankReportsDemo(applicationContext);
     }
 
-    public static void bankReportsDemo(ClientRepository repository) {
+    public static void bankReportsDemo(ApplicationContext context) {
 
         System.out.println("\n=== Using BankReportService ===\n");
 
-        BankReportService reportService = new BankReportServiceImpl();
+        BankReportService reportService = (BankReportService) context.getBean("bankReport");
+        ClientRepository repository = (MapClientRepository) context.getBean("repository");
+
         reportService.setRepository(repository);
 
         System.out.println("Number of clients: " + reportService.getNumberOfBankClients());
@@ -74,11 +76,8 @@ public class BankApplication {
         Client jonny = banking.getClient(CLIENT_NAMES[0]);
 
         try {
-
             jonny.deposit(5_000);
-
         } catch (ActiveAccountNotSet e) {
-
             System.out.println(e.getMessage());
 
             jonny.setDefaultActiveAccountIfNotSet();

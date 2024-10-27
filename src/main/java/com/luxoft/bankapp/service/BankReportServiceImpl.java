@@ -4,6 +4,7 @@ import com.luxoft.bankapp.model.AbstractAccount;
 import com.luxoft.bankapp.model.CheckingAccount;
 import com.luxoft.bankapp.model.Client;
 import com.luxoft.bankapp.service.storage.ClientRepository;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -15,13 +16,11 @@ public class BankReportServiceImpl implements BankReportService {
 
     @Override
     public int getNumberOfBankClients() {
-
         return repository.getAll().size();
     }
 
     @Override
     public int getAccountsNumber() {
-
         return repository.getAll()
                 .stream()
                 .flatMap(c -> c.getAccounts().stream())
@@ -30,7 +29,6 @@ public class BankReportServiceImpl implements BankReportService {
 
     @Override
     public List<Client> getClientsSorted() {
-
         return repository.getAll()
                 .stream()
                 .sorted(Comparator.comparing(Client::getName))
@@ -39,7 +37,6 @@ public class BankReportServiceImpl implements BankReportService {
 
     @Override
     public double getBankCreditSum() {
-
         return repository.getAll().stream()
                 .flatMap(c -> c.getAccounts().stream())
                 .filter(a -> a.getClass() == CheckingAccount.class)
@@ -50,13 +47,11 @@ public class BankReportServiceImpl implements BankReportService {
 
     @Override
     public Map<String, List<Client>> getClientsByCity() {
-
         return repository.getAll().stream()
                 .collect(Collectors.groupingBy(Client::getCity));
     }
 
     public void setRepository(ClientRepository repository) {
-
         this.repository = repository;
     }
 }
