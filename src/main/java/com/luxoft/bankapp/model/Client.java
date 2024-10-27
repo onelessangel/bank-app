@@ -100,6 +100,10 @@ public class Client {
         }
     }
 
+    public void setAccounts(List<AbstractAccount> accounts) {
+        this.accounts = accounts;
+    }
+
     public void setDefaultActiveAccountIfNotSet() {
         if (activeAccount == null && accounts != null && !accounts.isEmpty()) {
             AbstractAccount account = getAccount(CheckingAccount.class);

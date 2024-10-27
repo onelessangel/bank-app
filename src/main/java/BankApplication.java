@@ -4,7 +4,6 @@ import com.luxoft.bankapp.model.CheckingAccount;
 import com.luxoft.bankapp.model.Client;
 import com.luxoft.bankapp.model.SavingAccount;
 import com.luxoft.bankapp.service.BankReportService;
-import com.luxoft.bankapp.service.BankReportServiceImpl;
 import com.luxoft.bankapp.service.Banking;
 import com.luxoft.bankapp.service.BankingImpl;
 import com.luxoft.bankapp.model.Client.Gender;
@@ -103,24 +102,14 @@ public class BankApplication {
     /*
      * Method that creates a few clients and initializes them with sample values
      */
-    public static Banking initialize(ApplicationContext applicationContext) {
-        Banking banking = (BankingImpl) applicationContext.getBean("banking");
-        ClientRepository repository = (MapClientRepository) applicationContext.getBean("repository");
+    public static Banking initialize(ApplicationContext context) {
+        Banking banking = (BankingImpl) context.getBean("banking");
+        ClientRepository repository = (MapClientRepository) context.getBean("repository");
 
         banking.setRepository(repository);
 
-        Client client_1 = new Client(CLIENT_NAMES[0], Gender.MALE);
-
-        AbstractAccount savingAccount = new SavingAccount(1000);
-        client_1.addAccount(savingAccount);
-
-        AbstractAccount checkingAccount = new CheckingAccount(1000);
-        client_1.addAccount(checkingAccount);
-
-        Client client_2 = new Client(CLIENT_NAMES[1], Gender.MALE);
-
-        AbstractAccount checking = new CheckingAccount(1500);
-        client_2.addAccount(checking);
+        Client client_1 = (Client) context.getBean("client1");
+        Client client_2 = (Client) context.getBean("client2");
 
         banking.addClient(client_1);
         banking.addClient(client_2);
