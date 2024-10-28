@@ -1,3 +1,4 @@
+import com.luxoft.bankapp.BankApplication;
 import com.luxoft.bankapp.model.*;
 import com.luxoft.bankapp.service.Banking;
 import com.luxoft.bankapp.service.BankingImpl;
@@ -6,19 +7,22 @@ import com.luxoft.bankapp.service.storage.MapClientRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.PropertySource;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringJUnitConfig(locations = {"classpath:application-context.xml", "classpath:test-clients.xml"})
+@ContextConfiguration(classes = BankApplication.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@ExtendWith(SpringExtension.class)
 public class BankApplicationTask3Tests {
     private static final String[] CLIENT_NAMES =
             {"Jonny Bravo", "Adam Budzinski", "Anna Smith"};
@@ -57,27 +61,19 @@ public class BankApplicationTask3Tests {
 
     @BeforeEach
     public void init() {
-
-        try {
-            BankApplication.class.getMethod("initialize", ApplicationContext.class).invoke(null, applicationContext);
-        } catch (Exception e) {
-            e.printStackTrace();
-            // ignore
-        }
-
-        // TODO you can replace code above with this when will have the method
-//        BankApplication.initialize(applicationContext);
+        BankApplication.initialize(applicationContext);
     }
 
     @Test
     public void placeholderConfigurerBeanConfiguration() {
         assertNotNull(placeholderConfigurer, "placeholderConfigurer bean should be configured");
 
-        PropertySource<?> localProperties = placeholderConfigurer.getAppliedPropertySources().get("localProperties");
-        assertNotNull(localProperties, "You should configure PropertySourcesPlaceholderConfigurer bean");
+        PropertySource<?> environmentProperties =
+                placeholderConfigurer.getAppliedPropertySources().get("environmentProperties");
+        assertNotNull(environmentProperties, "You should configure PropertySourcesPlaceholderConfigurer bean");
 
-        assertEquals("Jonny Bravo", localProperties.getProperty("client1"));
-        assertEquals("Adam Budzinski", localProperties.getProperty("client2"));
+        assertEquals("Jonny Bravo", environmentProperties.getProperty("client1.name"));
+        assertEquals("Adam Budzinski", environmentProperties.getProperty("client2.name"));
     }
 
     @Test
@@ -193,7 +189,7 @@ public class BankApplicationTask3Tests {
 
     @Test
     public void workWithExistingClientsTest() {
-        BankApplication.workWithExistingClients(banking);
+        BankApplication.workWithExistingClients(applicationContext);
 
         Client jonny = banking.getClient(CLIENT_NAMES[0]);
         assertEquals(4000, jonny.getActiveAccount().getBalance());
@@ -204,7 +200,7 @@ public class BankApplicationTask3Tests {
 
     @Test
     public void bankingServiceDemoTest() {
-        BankApplication.bankingServiceDemo(banking);
+        BankApplication.bankingServiceDemo(applicationContext);
 
         Client anna = banking.getClient(CLIENT_NAMES[2]);
         assertNotNull(anna, "banking should have client with name: " + CLIENT_NAMES[2]);

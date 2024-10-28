@@ -1,3 +1,4 @@
+import com.luxoft.bankapp.BankApplication;
 import com.luxoft.bankapp.model.AbstractAccount;
 import com.luxoft.bankapp.model.CheckingAccount;
 import com.luxoft.bankapp.model.Client;
@@ -7,16 +8,19 @@ import com.luxoft.bankapp.service.BankingImpl;
 import com.luxoft.bankapp.service.storage.ClientRepository;
 import com.luxoft.bankapp.service.storage.MapClientRepository;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringJUnitConfig(locations = "classpath:test-clients.xml")
+@ContextConfiguration(classes = BankApplication.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@ExtendWith(SpringExtension.class)
 public class BankApplicationTask1Tests {
     private static final String[] CLIENT_NAMES =
             {"Jonny Bravo", "Adam Budzinski", "Anna Smith"};
@@ -107,7 +111,7 @@ public class BankApplicationTask1Tests {
 
     @Test
     public void workWithExistingClientsTest() {
-        BankApplication.workWithExistingClients(banking);
+        BankApplication.workWithExistingClients(applicationContext);
 
         Client jonny = banking.getClient(CLIENT_NAMES[0]);
         assertEquals(4000, jonny.getActiveAccount().getBalance());
@@ -118,7 +122,7 @@ public class BankApplicationTask1Tests {
 
     @Test
     public void bankingServiceDemoTest() {
-        BankApplication.bankingServiceDemo(banking);
+        BankApplication.bankingServiceDemo(applicationContext);
 
         Client anna = banking.getClient(CLIENT_NAMES[2]);
         assertNotNull(anna, "banking should have client with name: " + CLIENT_NAMES[2]);

@@ -1,3 +1,4 @@
+import com.luxoft.bankapp.BankApplication;
 import com.luxoft.bankapp.model.AbstractAccount;
 import com.luxoft.bankapp.model.CheckingAccount;
 import com.luxoft.bankapp.model.Client;
@@ -11,16 +12,19 @@ import com.luxoft.bankapp.service.storage.MapClientRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringJUnitConfig(locations = "classpath:test-clients.xml")
+@ContextConfiguration(classes = BankApplication.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@ExtendWith(SpringExtension.class)
 public class BankApplicationTask2Tests {
     private static final String[] CLIENT_NAMES =
             {"Jonny Bravo", "Adam Budzinski", "Anna Smith"};
@@ -124,8 +128,8 @@ public class BankApplicationTask2Tests {
     public void getNumberOfBankClients() {
         assertEquals(2, bankReport.getNumberOfBankClients());
 
-        BankApplication.workWithExistingClients(banking);
-        BankApplication.bankingServiceDemo(banking);
+        BankApplication.workWithExistingClients(applicationContext);
+        BankApplication.bankingServiceDemo(applicationContext);
 
         assertEquals(3, bankReport.getNumberOfBankClients());
     }
@@ -134,8 +138,8 @@ public class BankApplicationTask2Tests {
     public void getAccountsNumber() {
         assertEquals(3, bankReport.getAccountsNumber());
 
-        BankApplication.workWithExistingClients(banking);
-        BankApplication.bankingServiceDemo(banking);
+        BankApplication.workWithExistingClients(applicationContext);
+        BankApplication.bankingServiceDemo(applicationContext);
 
         assertEquals(5, bankReport.getAccountsNumber());
     }
@@ -144,8 +148,8 @@ public class BankApplicationTask2Tests {
     public void getBankCreditSum() {
         assertEquals(0, bankReport.getBankCreditSum());
 
-        BankApplication.workWithExistingClients(banking);
-        BankApplication.bankingServiceDemo(banking);
+        BankApplication.workWithExistingClients(applicationContext);
+        BankApplication.bankingServiceDemo(applicationContext);
 
         assertEquals(-500, bankReport.getBankCreditSum());
 
